@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>for smolli</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Italiana&display=swap" rel="stylesheet">
+<style>
+  /* Shadow of the Deads — layered chromatic font */
+  @font-face { font-family: 'SOTD Base';  src: url('Shadow of the Deads.ttf')       format('truetype'); font-display: block; }
+  @font-face { font-family: 'SOTD Under'; src: url('Shadow of the Deads Under.ttf') format('truetype'); font-display: block; }
+  @font-face { font-family: 'SOTD Over';  src: url('Shadow of the Deads Over.ttf')  format('truetype'); font-display: block; }
+  @font-face { font-family: 'Curse of the Zombie'; src: url('Curse of the Zombie.ttf') format('truetype'); font-display: block; }
+  @font-face { font-family: 'Eternal Torment'; src: url('Eternal Torment Demo.otf') format('opentype'); font-display: block; }
+  @font-face { font-family: 'Horror Korpus'; src: url('HorrorKorpusClean.otf') format('opentype'); font-display: block; }
+
+  :root {
+    --ink: #efe3cf;
+    --ink-dim: #a89a85;
+    --ember: #c2410c;
+    --blood-deep: #5a0a12;
+    --blood: #8a2026;
+    --candle-gold: #f2d9a8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    cursor: none;
+  }
+  body:not(.started) { cursor: pointer; }
+
+  /* pre-click: hold the whole sequence. 666 floats + jitters on its own. */
+  body:not(.started) :is(
+    .fire-stage, .fog, .petals, .filigree,
+    .mandala, .greeting, .name, .rule, .wish, .age, .controls
+  ) {
+    animation-play-state: paused;
+  }
+
+  body {
+    background:
+      radial-gradient(1400px 1050px at 50% 55%, rgba(150,35,45,0.38) 0%, rgba(50,12,18,0.35) 40%, rgba(6,2,3,1) 88%),
+      linear-gradient(180deg, #0a0305 0%, #170509 50%, #0a0305 100%);
+    color: var(--ink);
+    font-family: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+    font-weight: 300;
+    display: grid;
+    place-items: center;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* ========== z-index map ==========
+     0  mandala (subtle radial bg, canvas)
+     1  arch ("Happy birthday") + fire
+     2  skull
+     3  fog
+     4  vignette (::before)
+     5  petals
+     6  stage text (name, rule, wish), filigree
+     7  age (666 → 33)
+     8  grain (::after)
+  */
+
+  /* ---------- mandala (z:0) — subtle radial bg, rendered on canvas ---------- */
+  .mandala {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    animation: mandala-in 5s ease-out 22s forwards;
+  }
+  @keyframes mandala-in { to { opacity: 0.17; } }
+
+  /* ---------- fire (z:1) ---------- */
+  .fire-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    transform-origin: 50% 38%;
+    opacity: 0;
+    animation: fire-life 7s cubic-bezier(.36,.04,.22,1) 7s forwards;
+  }
+  .fire {
+    position: absolute;
+    inset: 0;
+    filter: blur(60px);
+  }
+  .fire-outer {
+    background: radial-gradient(ellipse 80% 70% at 50% 60%,
+      rgba(255, 210, 130, 0.85) 0%,
+      rgba(255, 120, 40,  0.75) 22%,
+      rgba(200, 30,  20,  0.55) 48%,
+      rgba(90,  10,  18,  0.3)  72%,
+      transparent 90%);
+  }
+  .fire-mid {
+    background: radial-gradient(ellipse 55% 60% at 50% 60%,
+      rgba(255, 250, 220, 0.95) 0%,
+      rgba(255, 170, 70,  0.85) 18%,
+      rgba(220, 60,  20,  0.6)  45%,
+      transparent 75%);
+    filter: blur(30px);
+    mix-blend-mode: screen;
+    animation: fire-flicker-a 0.22s infinite alternate;
+  }
+  .fire-core {
+    background: radial-gradient(ellipse 35% 45% at 50% 62%,
+      rgba(255, 255, 240, 1) 0%,
+      rgba(255, 220, 150, 0.9) 20%,
+      rgba(255, 130, 50,  0.55) 55%,
+      transparent 85%);
+    filter: blur(14px);
+    mix-blend-mode: screen;
+    animation: fire-flicker-b 0.18s infinite alternate;
+  }
+  @keyframes fire-flicker-a {
+    from { transform: scaleY(1) translateY(0); opacity: 1; }
+    to   { transform: scaleY(1.06) translateY(-6px); opacity: 0.92; }
+  }
+  @keyframes fire-flicker-b {
+    from { transform: scaleY(1) translateY(0); opacity: 1; }
+    to   { transform: scaleY(1.10) translateY(-10px) translateX(3px); opacity: 0.95; }
+  }
+  @keyframes fire-life {
+    0%   { opacity: 0; transform: scale(0.05); }
+    14%  { opacity: 0.18; transform: scale(1.15); }   /* blaze up (~8s) — subdued */
+    36%  { opacity: 0.22; transform: scale(1.25); }   /* peak (~9.5s) — subdued */
+    55%  { opacity: 0.18; transform: scale(0.8) translateY(-4vh); }
+    78%  { opacity: 0.12; transform: scale(0.15) translateY(-10vh); }
+    100% { opacity: 0;    transform: scale(0.02) translateY(-12vh); }
+  }
+
+  /* ---------- skull (z:2) — three.js canvas ---------- */
+  .skull-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  #skull-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* ---------- fog (z:3) ---------- */
+  .fog {
+    position: fixed;
+    inset: -15%;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0;
+    animation: fog-in 4s ease-out 10s forwards;
+  }
+  @keyframes fog-in { to { opacity: 1; } }
+  .fog-layer {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    mix-blend-mode: screen;
+  }
+  .fog-layer.a {
+    width: 90vw; height: 90vw;
+    background: radial-gradient(circle, rgba(140,26,30,0.5), transparent 60%);
+    top: -30%; left: -25%;
+    opacity: 0.84;
+    animation: drift-a 32s ease-in-out infinite;
+  }
+  .fog-layer.b {
+    width: 80vw; height: 80vw;
+    background: radial-gradient(circle, rgba(54,8,12,0.75), transparent 60%);
+    bottom: -35%; right: -15%;
+    opacity: 0.96;
+    animation: drift-b 38s ease-in-out infinite;
+  }
+  .fog-layer.c {
+    width: 55vw; height: 55vw;
+    background: radial-gradient(circle, rgba(200,70,50,0.22), transparent 55%);
+    top: 35%; left: 42%;
+    opacity: 0.72;
+    animation: drift-c 46s ease-in-out infinite;
+  }
+  @keyframes drift-a { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(25vw,18vh) scale(1.15)} }
+  @keyframes drift-b { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-22vw,-12vh) scale(1.12)} }
+  @keyframes drift-c { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-12vw,10vh) scale(0.92)} }
+
+  /* ---------- vignette (z:4) ---------- */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 50% 52%, transparent 44%, rgba(0,0,0,0.55) 100%);
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  /* ---------- grain (z:8) ---------- */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92  0 0 0 0 0.82  0 0 0 0 0.75  0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.55;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 8;
+  }
+
+  /* ---------- petals (z:5) — marigold drift ---------- */
+  .petals {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0;
+    animation: petals-in 4s ease-out 10s forwards;
+  }
+  @keyframes petals-in { to { opacity: 1; } }
+  .petal {
+    position: absolute;
+    top: -8%;
+    width: 14px;
+    height: 20px;
+    background: radial-gradient(ellipse at 50% 30%,
+      #e8546a 0%,
+      #c2233a 42%,
+      #6a0a18 85%,
+      transparent 100%);
+    border-radius: 60% 60% 45% 45% / 70% 70% 40% 40%;
+    filter: blur(0.3px) drop-shadow(0 0 6px rgba(194, 35, 58, 0.4));
+    opacity: 0.82;
+    will-change: transform;
+    animation-name: petal-fall, petal-sway;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+    animation-direction: normal, alternate;
+  }
+  @keyframes petal-fall {
+    0%   { transform: translate3d(0, 0,     0) rotate(0deg)   scale(var(--s, 1)); }
+    100% { transform: translate3d(0, 115vh, 0) rotate(540deg) scale(var(--s, 1)); }
+  }
+  @keyframes petal-sway {
+    0%   { margin-left: -22px; }
+    100% { margin-left:  22px; }
+  }
+
+  /* ---------- filigree (z:6) — corner ornaments ---------- */
+  .filigree {
+    position: fixed;
+    width: 160px;
+    height: 160px;
+    z-index: 6;
+    pointer-events: none;
+    opacity: 0;
+    animation: filigree-in 4s ease-out 12s forwards;
+  }
+  @keyframes filigree-in { to { opacity: 0.7; } }
+  .filigree svg { width: 100%; height: 100%; display: block; }
+  /* top-right filigree sits behind the control icons — fade it further */
+  .filigree.tr { animation: filigree-in-tr 4s ease-out 12s forwards; }
+  @keyframes filigree-in-tr { to { opacity: 0.2; } }
+  .filigree.tl { top: 14px;    left: 14px;    }
+  .filigree.tr { top: 14px;    right: 14px;   transform: scaleX(-1); }
+  .filigree.bl { bottom: 14px; left: 14px;    transform: scaleY(-1); }
+  .filigree.br { bottom: 14px; right: 14px;   transform: scale(-1, -1); }
+
+  /* ---------- stage text ---------- */
+  /* NOTE: .stage has no z-index so its children can straddle the skull's z:2 — */
+  /* .arch sits behind skull (z:1); .name, .rule, .wish stay in front (z:6). */
+  .stage {
+    position: relative;
+    text-align: center;
+    max-width: 960px;
+    padding: 3.5rem 3rem;
+    animation: breathe 8s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.012); }
+  }
+
+  .greeting {
+    font-family: 'Eternal Torment', "Italiana", serif;
+    font-weight: 400;
+    color: var(--candle-gold);
+    line-height: 1.1;
+    opacity: 0;
+    animation: fade 3s ease-out 17.5s forwards;
+  }
+  .arch {
+    display: block;
+    position: relative;
+    z-index: 1;
+    width: clamp(30rem, 80vw, 57.5rem);
+    height: auto;
+    margin: 0 auto -6rem;
+    overflow: visible;
+    transform: translateY(3px);
+    filter: drop-shadow(0 0 28px rgba(242, 217, 168, 0.25));
+  }
+  .arch text {
+    font-family: 'Eternal Torment', "Italiana", serif;
+    font-size: 11.8rem;
+    letter-spacing: 0.04em;
+    fill: var(--candle-gold);
+  }
+  .name {
+    display: block;
+    position: relative;
+    z-index: 6;
+    font-family: 'Horror Korpus', 'Eternal Torment', "Cormorant Garamond", serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12.4rem;
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+    background: linear-gradient(180deg, #f6dcbe 0%, #d36a4a 45%, #8a2026 78%, #5a0a12 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-top: 386px;
+    opacity: 0;
+    animation: fade 3.2s ease-out 18.5s forwards;
+  }
+
+  .rule {
+    position: relative;
+    z-index: 6;
+    width: 140px;
+    height: 1px;
+    margin: calc(2.2rem - 7px) auto 2.2rem;
+    background: linear-gradient(90deg, transparent, #8a2026 50%, transparent);
+    opacity: 0;
+    animation: fade 2s ease-out 20s forwards;
+  }
+  .wish {
+    position: relative;
+    z-index: 6;
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--ink-dim);
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    max-width: 38rem;
+    margin: -17px auto 0;
+    opacity: 0;
+    animation: fade 3s ease-out 20.5s forwards;
+  }
+
+  /* ---------- age (z:7) - viewport-centered 666→33 ---------- */
+  .age {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    animation: age-666-out 2s ease-in 11s forwards;
+  }
+  .age-666 {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.22em;
+    font-size: clamp(5.5rem, 16vw, 13rem);
+    line-height: 1;
+    filter: drop-shadow(0 0 55px rgba(194, 59, 44, 0.55))
+            drop-shadow(0 0 120px rgba(194, 59, 44, 0.3));
+    animation: age-float 7s ease-in-out infinite;
+  }
+  @keyframes age-float {
+    0%, 100% { transform: translateY(-2px); }
+    50%      { transform: translateY(-10px); }
+  }
+  .age-666 .digit {
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+    min-width: 0.62em;
+    text-align: left;
+  }
+  /* per-digit jitter — subtle, always running so the 6s feel alive pre-click */
+  .age-666 .digit:nth-child(1) { animation: jitter-a 3.3s ease-in-out infinite; }
+  .age-666 .digit:nth-child(2) { animation: jitter-b 4.1s ease-in-out infinite; }
+  .age-666 .digit:nth-child(3) { animation: jitter-c 3.7s ease-in-out infinite; }
+  @keyframes jitter-a {
+    0%, 100% { transform: translate(0, 0)       rotate(0deg); }
+    25%      { transform: translate(-0.6px, 1px) rotate(-0.45deg); }
+    50%      { transform: translate(0.9px, -1.1px) rotate(0.35deg); }
+    75%      { transform: translate(-0.4px, 0.6px) rotate(-0.25deg); }
+  }
+  @keyframes jitter-b {
+    0%, 100% { transform: translate(0, 0)       rotate(0deg); }
+    30%      { transform: translate(0.7px, -0.9px) rotate(0.35deg); }
+    60%      { transform: translate(-0.8px, 1px)  rotate(-0.3deg); }
+  }
+  @keyframes jitter-c {
+    0%, 100% { transform: translate(0, 0)       rotate(0deg); }
+    35%      { transform: translate(-1px, 0.7px) rotate(-0.35deg); }
+    70%      { transform: translate(0.6px, -1.3px) rotate(0.45deg); }
+  }
+  /* when the middle fades, glide the outer 3s together instead of snapping */
+  .age-666.collapsing .digit:nth-child(1) { animation: slide-right 1.1s cubic-bezier(.3,0,.2,1) 0.35s forwards; }
+  .age-666.collapsing .digit:nth-child(3) { animation: slide-left  1.1s cubic-bezier(.3,0,.2,1) 0.35s forwards; }
+  @keyframes slide-right { to { transform: translate(0.58em, 0); } }
+  @keyframes slide-left  { to { transform: translate(-0.58em, 0); } }
+
+  .age-666 .digit.flip {
+    animation: digit-flip 700ms cubic-bezier(.5,0,.5,1) forwards;
+  }
+  @keyframes digit-flip {
+    0%   { filter: blur(0);   opacity: 1;   transform: scale(1); }
+    42%  { filter: blur(18px); opacity: 0.08; transform: scale(1.06); }
+    58%  { filter: blur(18px); opacity: 0.08; transform: scale(1.06); }
+    100% { filter: blur(0);   opacity: 1;   transform: scale(1); }
+  }
+  .age-666 .digit.hide {
+    animation: digit-hide 1s ease-out forwards;
+  }
+  @keyframes digit-hide {
+    0%   { opacity: 1; filter: blur(0);  transform: scale(1); }
+    100% { opacity: 0; filter: blur(12px); transform: scale(0.88); }
+  }
+  .age-666 .ly {
+    display: block;
+    font-size: inherit;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .age-666 .ly.base {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    font-family: 'SOTD Base', 'Italiana', serif;
+    color: #390E05;
+  }
+  .age-666 .ly.under {
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 1;
+    font-family: 'SOTD Under', 'Italiana', serif;
+    color: #5a0a12;
+  }
+  .age-666 .ly.over {
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 3;
+    font-family: 'SOTD Over', 'Italiana', serif;
+    color: #c23b2c;
+  }
+  @keyframes age-666-out {
+    0%   { opacity: 1; filter: blur(0); }
+    100% { opacity: 0; filter: blur(16px); }
+  }
+
+  @keyframes fade { to { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01s !important; animation-iteration-count: 1 !important; }
+  }
+
+  /* ---------- top-right controls (mute / volume / fullscreen) ---------- */
+  .controls {
+    position: fixed;
+    top: 20px;
+    right: 200px;
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    pointer-events: none;
+    opacity: 0;
+    animation: controls-in 2s ease-out 16s forwards;
+  }
+  @keyframes controls-in { to { opacity: 0.55; } }
+  body.ctrl-ready .controls { pointer-events: auto; }
+  .controls:hover { filter: brightness(1.5); transition: filter 0.25s ease; }
+  .controls, .controls * { cursor: auto; }
+  .controls .ctrl { cursor: pointer; }
+
+  .ctrl {
+    --dx: 0px;
+    --dy: 0px;
+    --sc: 1;
+    background: transparent;
+    border: none;
+    color: #d9342f;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(var(--dx), var(--dy)) scale(var(--sc));
+    transition: color 0.25s ease, transform 0.25s ease;
+  }
+  .ctrl:hover { color: var(--candle-gold); transform: translate(var(--dx), var(--dy)) scale(calc(var(--sc) * 1.08)); }
+  .ctrl svg { width: 22px; height: 22px; overflow: visible; }
+
+  /* per-icon baked positions */
+  #c-vol    { --dx: 255px; --dy: 50px;  --sc: 1.38; }
+  #c-replay { --dx: 208px; --dy: 100px; --sc: 1.16; }
+  #c-fs     { --dx: 159px; --dy: 0px;   --sc: 1.22; }
+
+  /* 4-state speaker: default hidden, active one shown via .controls.vol-* class */
+  .ctrl .ic-vol-low,
+  .ctrl .ic-vol-mid,
+  .ctrl .ic-vol-high,
+  .ctrl .ic-vol-mute { display: none; }
+  .controls.vol-low  .ic-vol-low  { display: inline; }
+  .controls.vol-mid  .ic-vol-mid  { display: inline; }
+  .controls.vol-high .ic-vol-high { display: inline; }
+  .controls.vol-mute .ic-vol-mute { display: inline; }
+
+  .ic-fs-exit { display: none; }
+  body.is-fs .ic-fs-enter { display: none; }
+  body.is-fs .ic-fs-exit  { display: inline; }
+
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+  <!-- top-right controls -->
+  <div class="controls vol-high" id="controls">
+    <button class="ctrl" id="c-vol" aria-label="Volume">
+      <svg class="ic-vol-low" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 L6 9 H2 v6 h4 l5 4 z"/>
+        <path d="M15.5 9.5 a3.5 3.5 0 0 1 0 5"/>
+      </svg>
+      <svg class="ic-vol-mid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 L6 9 H2 v6 h4 l5 4 z"/>
+        <path d="M15.5 9.5 a3.5 3.5 0 0 1 0 5"/>
+        <path d="M18.5 6.5 a7 7 0 0 1 0 11"/>
+      </svg>
+      <svg class="ic-vol-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 L6 9 H2 v6 h4 l5 4 z"/>
+        <path d="M15.5 9.5 a3.5 3.5 0 0 1 0 5"/>
+        <path d="M18.5 6.5 a7 7 0 0 1 0 11"/>
+        <path d="M21.5 3.5 a11 11 0 0 1 0 17"/>
+      </svg>
+      <svg class="ic-vol-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 L6 9 H2 v6 h4 l5 4 z"/>
+        <line x1="16.5" y1="9"  x2="22.5" y2="15"/>
+        <line x1="22.5" y1="9"  x2="16.5" y2="15"/>
+      </svg>
+    </button>
+    <button class="ctrl" id="c-replay" aria-label="Replay">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 4 20 10 14 10"/>
+        <path d="M20 10 A8.5 8.5 0 1 0 19 15"/>
+      </svg>
+    </button>
+    <button class="ctrl" id="c-fs" aria-label="Toggle fullscreen">
+      <svg class="ic-fs-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3 H5 a2 2 0 0 0 -2 2 V8"/>
+        <path d="M21 8 V5 a2 2 0 0 0 -2 -2 H16"/>
+        <path d="M3 16 V19 a2 2 0 0 0 2 2 H8"/>
+        <path d="M16 21 H19 a2 2 0 0 0 2 -2 V16"/>
+      </svg>
+      <svg class="ic-fs-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3 V6 a2 2 0 0 1 -2 2 H3"/>
+        <path d="M21 8 H18 a2 2 0 0 1 -2 -2 V3"/>
+        <path d="M3 16 H6 a2 2 0 0 1 2 2 V21"/>
+        <path d="M16 21 V18 a2 2 0 0 1 2 -2 H21"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- mandala (z:0) — subtle radial bg, driven by canvas 2D -->
+  <canvas class="mandala" id="mandala" aria-hidden="true"></canvas>
+
+  <!-- fire (z:1) -->
+  <div class="fire-stage" aria-hidden="true">
+    <div class="fire fire-outer"></div>
+    <div class="fire fire-mid"></div>
+    <div class="fire fire-core"></div>
+  </div>
+
+  <!-- skull (z:2) — three.js -->
+  <div class="skull-stage" aria-hidden="true">
+    <canvas id="skull-canvas"></canvas>
+  </div>
+
+  <!-- fog (z:3) -->
+  <div class="fog" aria-hidden="true">
+    <div class="fog-layer a"></div>
+    <div class="fog-layer b"></div>
+    <div class="fog-layer c"></div>
+  </div>
+
+  <!-- petals (z:5) — marigold drift, populated by script -->
+  <div class="petals" aria-hidden="true"></div>
+
+  <!-- filigree (z:6) — corner ornaments -->
+  <div class="filigree tl" aria-hidden="true">
+    <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#f2d9a8" stroke-width="1.1" stroke-linecap="round">
+      <path d="M8 8 L8 70" opacity="0.55"/>
+      <path d="M8 8 L70 8" opacity="0.55"/>
+      <path d="M8 18 Q 24 18 30 32 T 56 54" opacity="0.45"/>
+      <path d="M18 8 Q 18 24 32 30 T 54 56" opacity="0.45"/>
+      <path d="M10 40 Q 26 32 34 48 Q 42 64 58 58" opacity="0.35"/>
+      <path d="M40 10 Q 32 26 48 34 Q 64 42 58 58" opacity="0.35"/>
+      <circle cx="8" cy="8" r="2.2" fill="#f2d9a8" stroke="none" opacity="0.8"/>
+      <circle cx="34" cy="34" r="1.4" fill="#c2410c" stroke="none" opacity="0.7"/>
+      <circle cx="58" cy="58" r="1.1" fill="#f2d9a8" stroke="none" opacity="0.55"/>
+      <path d="M22 22 Q 28 18 34 22 Q 30 28 22 22 Z" fill="#c2410c" stroke="none" opacity="0.3"/>
+    </svg>
+  </div>
+  <div class="filigree tr" aria-hidden="true">
+    <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#f2d9a8" stroke-width="1.1" stroke-linecap="round">
+      <path d="M8 8 L8 70" opacity="0.55"/>
+      <path d="M8 8 L70 8" opacity="0.55"/>
+      <path d="M8 18 Q 24 18 30 32 T 56 54" opacity="0.45"/>
+      <path d="M18 8 Q 18 24 32 30 T 54 56" opacity="0.45"/>
+      <path d="M10 40 Q 26 32 34 48 Q 42 64 58 58" opacity="0.35"/>
+      <path d="M40 10 Q 32 26 48 34 Q 64 42 58 58" opacity="0.35"/>
+      <circle cx="8" cy="8" r="2.2" fill="#f2d9a8" stroke="none" opacity="0.8"/>
+      <circle cx="34" cy="34" r="1.4" fill="#c2410c" stroke="none" opacity="0.7"/>
+      <circle cx="58" cy="58" r="1.1" fill="#f2d9a8" stroke="none" opacity="0.55"/>
+      <path d="M22 22 Q 28 18 34 22 Q 30 28 22 22 Z" fill="#c2410c" stroke="none" opacity="0.3"/>
+    </svg>
+  </div>
+  <div class="filigree bl" aria-hidden="true">
+    <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#f2d9a8" stroke-width="1.1" stroke-linecap="round">
+      <path d="M8 8 L8 70" opacity="0.55"/>
+      <path d="M8 8 L70 8" opacity="0.55"/>
+      <path d="M8 18 Q 24 18 30 32 T 56 54" opacity="0.45"/>
+      <path d="M18 8 Q 18 24 32 30 T 54 56" opacity="0.45"/>
+      <path d="M10 40 Q 26 32 34 48 Q 42 64 58 58" opacity="0.35"/>
+      <path d="M40 10 Q 32 26 48 34 Q 64 42 58 58" opacity="0.35"/>
+      <circle cx="8" cy="8" r="2.2" fill="#f2d9a8" stroke="none" opacity="0.8"/>
+      <circle cx="34" cy="34" r="1.4" fill="#c2410c" stroke="none" opacity="0.7"/>
+      <circle cx="58" cy="58" r="1.1" fill="#f2d9a8" stroke="none" opacity="0.55"/>
+      <path d="M22 22 Q 28 18 34 22 Q 30 28 22 22 Z" fill="#c2410c" stroke="none" opacity="0.3"/>
+    </svg>
+  </div>
+  <div class="filigree br" aria-hidden="true">
+    <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#f2d9a8" stroke-width="1.1" stroke-linecap="round">
+      <path d="M8 8 L8 70" opacity="0.55"/>
+      <path d="M8 8 L70 8" opacity="0.55"/>
+      <path d="M8 18 Q 24 18 30 32 T 56 54" opacity="0.45"/>
+      <path d="M18 8 Q 18 24 32 30 T 54 56" opacity="0.45"/>
+      <path d="M10 40 Q 26 32 34 48 Q 42 64 58 58" opacity="0.35"/>
+      <path d="M40 10 Q 32 26 48 34 Q 64 42 58 58" opacity="0.35"/>
+      <circle cx="8" cy="8" r="2.2" fill="#f2d9a8" stroke="none" opacity="0.8"/>
+      <circle cx="34" cy="34" r="1.4" fill="#c2410c" stroke="none" opacity="0.7"/>
+      <circle cx="58" cy="58" r="1.1" fill="#f2d9a8" stroke="none" opacity="0.55"/>
+      <path d="M22 22 Q 28 18 34 22 Q 30 28 22 22 Z" fill="#c2410c" stroke="none" opacity="0.3"/>
+    </svg>
+  </div>
+
+  <!-- age: centered in viewport (z:7) -->
+  <div class="age" aria-label="thirty three">
+    <span class="age-666" aria-hidden="true">
+      <span class="digit">
+        <span class="ly under">6</span>
+        <span class="ly base">6</span>
+        <span class="ly over">6</span>
+      </span>
+      <span class="digit">
+        <span class="ly under">6</span>
+        <span class="ly base">6</span>
+        <span class="ly over">6</span>
+      </span>
+      <span class="digit">
+        <span class="ly under">6</span>
+        <span class="ly base">6</span>
+        <span class="ly over">6</span>
+      </span>
+    </span>
+  </div>
+
+  <!-- stage text (z:4) -->
+  <main class="stage">
+    <h1 class="greeting">
+      <svg class="arch" viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg" aria-label="Happy birthday,">
+        <defs>
+          <path id="arch-path" d="M -50 240 Q 400 -30 850 240" fill="none"/>
+        </defs>
+        <text text-anchor="middle">
+          <textPath href="#arch-path" startOffset="50%">Happy birthday,</textPath>
+        </text>
+      </svg>
+      <span class="name">Smolli</span>
+    </h1>
+
+    <div class="rule"></div>
+
+    <p class="wish">
+      To the smollest creature who<br>
+      finds the beautiful in the strange, <br>
+      and the strange in the beautiful<br>
+    </p>
+  </main>
+
+  <script>
+    // mandala — subtle animated radial pattern behind the scene
+    (function () {
+      const canvas = document.getElementById('mandala');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // simple 1D value noise (smooth, deterministic per page load)
+      const PERM = new Float32Array(256);
+      for (let i = 0; i < 256; i++) PERM[i] = Math.random();
+      function noise(x) {
+        const xi = Math.floor(x);
+        const xf = x - xi;
+        const u = xf * xf * (3 - 2 * xf);
+        const a = PERM[xi & 255];
+        const b = PERM[(xi + 1) & 255];
+        return a + (b - a) * u;
+      }
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width  = window.innerWidth  * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // config
+      const SPACING_REF = 7;   // radius spacing as if there were 7 rings — extra rings extend outward
+      const cfg = {
+        n: Math.random() * 10,
+        off: 0.055,
+        baseCount: 5,
+        ringCount: 10,
+        sizeScale: 1.29,
+        dotScale: 0.70,
+        strokeW: 0,
+      };
+
+      const STROKE = '#5a0a12';   // --blood-deep
+      const FILL   = '#8a2026';   // --blood
+
+      let last = 0;
+      // parallax: inner rings rotate fastest, outer rings slower; alternating directions
+      const ROT_RATE = 0.00002;  // rad/ms per ring step
+      function draw(ts) {
+        requestAnimationFrame(draw);
+        if (ts - last < 42) return;  // throttle to ~24fps
+        last = ts;
+
+        const W = window.innerWidth, H = window.innerHeight;
+        ctx.clearRect(0, 0, W, H);
+        const dim = Math.min(W, H) * cfg.sizeScale;
+        const doStroke = cfg.strokeW > 0;
+
+        ctx.save();
+        ctx.translate(W / 2, H / 2);
+        ctx.lineWidth = cfg.strokeW;
+        ctx.strokeStyle = STROKE;
+        ctx.fillStyle = FILL;
+
+        for (let a = 0; a <= cfg.ringCount; a++) {
+          const r = a * dim / (SPACING_REF * 2.5);
+          const c = Math.floor(noise(a) * a * 3 + 1) * cfg.baseCount;
+          const s = Math.floor(noise(cfg.n + a) * 30) * cfg.dotScale;
+          if (s <= 0) continue;
+          const theta = (Math.PI * 2) / c;
+          const dir = (a % 2 === 0) ? 1 : -1;
+          const ringRot = ts * ROT_RATE * (cfg.ringCount + 1 - a) * dir;
+          ctx.save();
+          ctx.rotate(-Math.PI / 2 + ringRot);
+          for (let i = 0; i < c; i++) {
+            ctx.beginPath();
+            ctx.arc(r, 0, s, 0, Math.PI * 2);
+            ctx.fill();
+            if (doStroke) ctx.stroke();
+            ctx.rotate(theta);
+          }
+          ctx.restore();
+        }
+
+        ctx.restore();
+        cfg.n += cfg.off;
+      }
+      requestAnimationFrame(draw);
+    })();
+
+    // marigold petals — drift down, swaying
+    (function () {
+      const COUNT = 44;
+      const container = document.querySelector('.petals');
+      if (!container) return;
+      const rand = (a, b) => a + Math.random() * (b - a);
+      for (let i = 0; i < COUNT; i++) {
+        const p = document.createElement('span');
+        p.className = 'petal';
+        const scale = rand(0.5, 1.25);
+        const fallDur = rand(14, 26);
+        const swayDur = rand(3.5, 7);
+        const delay = rand(-20, 4);
+        p.style.left = rand(-4, 104) + 'vw';
+        p.style.setProperty('--s', scale.toFixed(2));
+        p.style.opacity = rand(0.45, 0.9).toFixed(2);
+        p.style.animationDuration = `${fallDur}s, ${swayDur}s`;
+        p.style.animationDelay = `${delay}s, ${rand(-3, 0)}s`;
+        p.style.filter = `blur(${rand(0.2, 0.9).toFixed(2)}px) drop-shadow(0 0 ${rand(4, 10).toFixed(0)}px rgba(194, 35, 58, 0.4))`;
+        container.appendChild(p);
+      }
+    })();
+
+    // jackpot ticker: 666 → 333, then middle 3 fades so "33" remains
+    (function () {
+      const TICKER_START  = 0;      // starts immediately on click
+      const TICK_RATE     = 50;     // ms per digit change
+      const SETTLE_0      = 1100;   // digit 0 locks to 3
+      const SETTLE_1      = 1900;   // digit 1 locks to 3
+      const SETTLE_2      = 2500;   // digit 2 locks to 3 (shows 333)
+      const FADE_MIDDLE   = 3700;   // hold 333, then fade middle so it reads 33
+      const END           = 5200;   // safety stop
+
+      function setDigit(el, v) {
+        el.querySelectorAll('.ly').forEach(l => l.textContent = v);
+      }
+
+      function runTicker() {
+        const digits = Array.from(document.querySelectorAll('.age-666 > .digit'));
+        if (digits.length !== 3) return;
+        const age666 = document.querySelector('.age-666');
+        const start  = performance.now();
+        let lastTick = 0;
+        const locked = [false, false, false];
+        let fadedMiddle = false;
+
+        function frame(now) {
+          const elapsed = now - start;
+          if (now - lastTick >= TICK_RATE) {
+            lastTick = now;
+            if (!locked[0]) {
+              if (elapsed >= SETTLE_0) { setDigit(digits[0], 3); locked[0] = true; }
+              else setDigit(digits[0], Math.floor(Math.random() * 10));
+            }
+            if (!locked[1]) {
+              if (elapsed >= SETTLE_1) { setDigit(digits[1], 3); locked[1] = true; }
+              else setDigit(digits[1], Math.floor(Math.random() * 10));
+            }
+            if (!locked[2]) {
+              if (elapsed >= SETTLE_2) { setDigit(digits[2], 3); locked[2] = true; }
+              else setDigit(digits[2], Math.floor(Math.random() * 10));
+            }
+          }
+          if (!fadedMiddle && locked.every(Boolean) && elapsed >= FADE_MIDDLE) {
+            digits[1].classList.add('hide');
+            age666.classList.add('collapsing');
+            fadedMiddle = true;
+          }
+          if (elapsed < END || !fadedMiddle) {
+            requestAnimationFrame(frame);
+          }
+        }
+        requestAnimationFrame(frame);
+      }
+
+      // gate: wait for first click, then start the full sequence
+      const audio = new Audio('vivaldi%20-%20presto.mp3');
+      audio.volume = 0;
+      audio.preload = 'auto';
+      let userTookVolume = false;
+      function begin() {
+        if (document.body.classList.contains('started')) return;
+        document.body.classList.add('started');
+        setTimeout(runTicker, TICKER_START);
+
+        // enable control clicks once the icons have faded in with the flame (~t=18s)
+        setTimeout(() => document.body.classList.add('ctrl-ready'), 18000);
+
+        // request fullscreen (must be inside the user gesture)
+        const el = document.documentElement;
+        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (req) req.call(el).catch(() => {});
+
+        // fade audio in over 2.4s (easeOutCubic) — stops if user touches the volume control
+        const TARGET = 0.85;
+        const DUR    = 2400;
+        const t0     = performance.now();
+        audio.play().catch(() => {});
+        (function tick() {
+          if (userTookVolume) return;
+          const t = performance.now() - t0;
+          if (t >= DUR) { audio.volume = TARGET; return; }
+          const p = t / DUR;
+          audio.volume = TARGET * (1 - Math.pow(1 - p, 3));
+          requestAnimationFrame(tick);
+        })();
+      }
+
+      // top-right controls
+      const controlsEl = document.getElementById('controls');
+      const volBtn     = document.getElementById('c-vol');
+      const fsBtn      = document.getElementById('c-fs');
+
+      // speaker cycles: high → mute → low → mid → high …
+      const VOL_STATES = ['high', 'mute', 'low', 'mid'];
+      const VOL_LEVELS = { low: 0.25, mid: 0.55, high: 0.85 };
+      let volIdx = 0;   // starts at 'high' to match fade target
+      volBtn.addEventListener('click', () => {
+        volIdx = (volIdx + 1) % VOL_STATES.length;
+        const s = VOL_STATES[volIdx];
+        VOL_STATES.forEach(st => controlsEl.classList.remove('vol-' + st));
+        controlsEl.classList.add('vol-' + s);
+        if (s === 'mute') {
+          audio.muted = true;
+        } else {
+          audio.muted = false;
+          audio.volume = VOL_LEVELS[s];
+        }
+        userTookVolume = true;  // halt the fade-in
+      });
+
+      const replayBtn = document.getElementById('c-replay');
+      replayBtn.addEventListener('click', () => location.reload());
+
+      fsBtn.addEventListener('click', () => {
+        const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+        if (fsEl) {
+          const exit = document.exitFullscreen || document.webkitExitFullscreen;
+          if (exit) exit.call(document).catch(() => {});
+        } else {
+          const el = document.documentElement;
+          const req = el.requestFullscreen || el.webkitRequestFullscreen;
+          if (req) req.call(el).catch(() => {});
+        }
+      });
+      ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => {
+        document.addEventListener(ev, () => {
+          const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+          document.body.classList.toggle('is-fs', isFs);
+        });
+      });
+      window.addEventListener('DOMContentLoaded', () => {
+        document.body.addEventListener('click',   begin, { once: true });
+        document.body.addEventListener('keydown', begin, { once: true });
+      });
+    })();
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const canvas = document.getElementById('skull-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.95;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x060203, 3.5, 9);
+
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+    camera.position.set(0, 0, 5);
+
+    /* ---------- themed lights ---------- */
+    // low ambient so the red point light does most of the work
+    const ambient = new THREE.AmbientLight(0x2a0814, 0);
+    scene.add(ambient);
+
+    // warm "fire/candle" up-light (below-front) — drives the hot-from-below mood
+    const upLight = new THREE.PointLight(0xff7a30, 0, 12, 1.8);
+    upLight.position.set(0, -2.2, 2.2);
+    scene.add(upLight);
+
+    // crimson rim from behind — edge-glow for silhouette
+    const rimLight = new THREE.DirectionalLight(0xb02834, 1.9);
+    rimLight.position.set(0.5, 1.2, -2);
+    scene.add(rimLight);
+
+    // cool mauve fill from side for depth
+    const fill = new THREE.DirectionalLight(0x5a2038, 0.7);
+    fill.position.set(-2.2, 0.2, 1);
+    scene.add(fill);
+
+    // NEW: tunable red point light to illuminate the skull directly
+    const redLight = new THREE.PointLight(0xff2838, 2.6, 2.3, 2);
+    redLight.position.set(1.5, -0.65, 0.75);
+    scene.add(redLight);
+
+    let skullOpaqued = false;
+    const skullCanvasEl = document.getElementById('skull-canvas');
+
+    /* ---------- candle flame (3JS so it can cast real light on the skull) ---------- */
+    function makeFlameTexture(soft = 1) {
+      const c = document.createElement('canvas');
+      c.width = 128; c.height = 256;
+      const ctx = c.getContext('2d');
+      const grad = ctx.createRadialGradient(64, 176, 2 * soft, 64, 150, 96 * soft);
+      grad.addColorStop(0.00, 'rgba(255, 252, 228, 1.00)');
+      grad.addColorStop(0.12, 'rgba(255, 222, 140, 0.98)');
+      grad.addColorStop(0.30, 'rgba(255, 165,  60, 0.85)');
+      grad.addColorStop(0.55, 'rgba(220,  80,  20, 0.45)');
+      grad.addColorStop(0.80, 'rgba(110,  18,  12, 0.12)');
+      grad.addColorStop(1.00, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 128, 256);
+      return new THREE.CanvasTexture(c);
+    }
+    const flameSprite = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: makeFlameTexture(0.5),    // blur/softness
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      opacity: 0,
+    }));
+    flameSprite.scale.set(0.08, 0.39, 1);
+    flameSprite.position.set(0.05, 0.91, 0.25);
+    scene.add(flameSprite);
+
+    const flameLight = new THREE.PointLight(0xff9038, 0, 0.6, 2);
+    flameLight.position.set(0.05, 0.87, 0.25);
+    scene.add(flameLight);
+
+    const flameCtl = {
+      sizeW: 0.08, sizeH: 0.39,
+      intensity: 0, opacityMul: 2,
+      posX: 0.05, posY: 0.91, posZ: 0.25,
+    };
+
+    /* ---------- skull load ---------- */
+    let skullGroup = null;
+    let baseScale = 1;
+    const OFFSET_X = 0.04;
+    const OFFSET_Y = -0.15;
+    const skullMaterials = [];
+
+    const bone = new THREE.Color(0xdcc29a); // warm muted bone
+
+    const loader = new GLTFLoader();
+    loader.load(
+      'ScatteringSkull.glb',
+      (gltf) => {
+        skullGroup = gltf.scene;
+
+        // center + normalize scale
+        const box = new THREE.Box3().setFromObject(skullGroup);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        skullGroup.position.set(-center.x + OFFSET_X, -center.y + OFFSET_Y, -center.z);
+
+        const maxDim = Math.max(size.x, size.y, size.z);
+        baseScale = 1.43 / maxDim;
+        skullGroup.scale.setScalar(baseScale);
+
+        // re-skin every mesh — transparent so we can fade opacity in, but depthWrite on
+        // so the back of the skull never shows through the front during the fade
+        skullGroup.traverse((obj) => {
+          if (obj.isMesh) {
+            const mat = new THREE.MeshStandardMaterial({
+              color: bone.clone(),
+              roughness: 0.82,
+              metalness: 0.04,
+              emissive: new THREE.Color(0x3a0c18),
+              emissiveIntensity: 0.75,
+              transparent: true,
+              opacity: 0,
+              depthWrite: true,
+            });
+            obj.material = mat;
+            skullMaterials.push(mat);
+          } else if (obj.isPoints) {
+            const mat = new THREE.PointsMaterial({
+              color: bone.clone(),
+              size: 0.018,
+              sizeAttenuation: true,
+              transparent: true,
+              opacity: 0,
+              depthWrite: false,
+            });
+            obj.material = mat;
+            skullMaterials.push(mat);
+          }
+        });
+
+        scene.add(skullGroup);
+      },
+      undefined,
+      (err) => console.warn('skull load failed', err)
+    );
+
+    /* ---------- choreography ---------- */
+    // skull opacity — appears after petals (~10s), reaches full in 2s, solo for 2s, then text
+    function computeOpacity(t) {
+      if (t < 13) return 0;
+      if (t < 15) return easeOutCubic((t - 13) / 2);
+      return 1;
+    }
+    // warm fire up-light intensity peaks with the CSS fire blaze
+    function computeFireLight(t) {
+      if (t < 7)   return 0;
+      if (t < 9.2) return easeOutCubic((t - 7) / 2.2) * 6.5;
+      if (t < 11)  return 6.5 - easeInOutCubic((t - 9.2) / 1.8) * 5.3; // down to 1.2 (candle level)
+      return 1.2;
+    }
+    function easeOutCubic(p)   { return 1 - Math.pow(1 - p, 3); }
+    function easeInOutCubic(p) { return p < 0.5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2; }
+
+    /* ---------- loop ---------- */
+    // clock doesn't start until the user clicks (gates the sequence)
+    const clock = new THREE.Clock(false);
+    document.body.addEventListener('click', () => {
+      if (!clock.running) clock.start();
+    }, { once: true });
+    document.body.addEventListener('keydown', () => {
+      if (!clock.running) clock.start();
+    }, { once: true });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.running ? clock.getElapsedTime() : 0;
+
+      upLight.intensity = computeFireLight(t);
+
+      // candle flame: fades in at t=16 over 2s, then flickers
+      const flameFade = t < 16 ? 0 : Math.min(1, easeOutCubic((t - 16) / 2));
+      const flicker = 0.82
+        + Math.sin(t * 22.0) * 0.09
+        + Math.sin(t * 14.7) * 0.06
+        + Math.sin(t * 31.2) * 0.04;
+      flameSprite.material.opacity = flameFade * Math.min(1, flicker + 0.08) * flameCtl.opacityMul;
+      flameSprite.scale.set(
+        flameCtl.sizeW * (0.94 + flicker * 0.06),
+        flameCtl.sizeH * (0.90 + flicker * 0.14),
+        1
+      );
+      flameSprite.position.x = flameCtl.posX + Math.sin(t * 8.3) * 0.004;
+      flameSprite.position.y = flameCtl.posY;
+      flameSprite.position.z = flameCtl.posZ + Math.sin(t * 6.7) * 0.003;
+      flameLight.intensity = flameFade * (flameCtl.intensity + flicker * 0.45);
+      flameLight.position.x = flameSprite.position.x;
+      flameLight.position.y = flameSprite.position.y - 0.04;
+      flameLight.position.z = flameSprite.position.z;
+
+      if (skullGroup) {
+        // gentle left-right look + very slow X drift, so motion never feels metronomic
+        skullGroup.rotation.y = Math.sin(t * 0.169) * 0.45;
+        // layered slow sines — bounded so the skull can never topple past profile
+        skullGroup.rotation.x = Math.sin(t * 0.20)  * 0.045
+                              + Math.sin(t * 0.037) * 0.20
+                              + Math.sin(t * 0.071) * 0.08;
+        const breathe = 1 + Math.sin(t * 0.35) * 0.012;
+        skullGroup.scale.setScalar(baseScale * breathe);
+
+        // fade in by opacity + blur — no size change
+        let opacity, blurPx;
+        if (t < 13) {
+          skullGroup.visible = false;
+          opacity = 0; blurPx = 14;
+        } else {
+          skullGroup.visible = true;
+          const p = Math.min(1, (t - 13) / 2);
+          const eased = easeOutCubic(p);
+          opacity = eased;
+          blurPx = (1 - eased) * 14;
+        }
+        for (const m of skullMaterials) m.opacity = opacity;
+        skullCanvasEl.style.filter = blurPx > 0.01 ? `blur(${blurPx.toFixed(2)}px)` : '';
+
+        // once fully visible, flip materials to truly opaque (clean depth + no flicker)
+        const shouldBeOpaque = opacity >= 1;
+        if (shouldBeOpaque !== skullOpaqued) {
+          for (const m of skullMaterials) {
+            m.transparent = !shouldBeOpaque;
+            m.needsUpdate = true;
+          }
+          skullOpaqued = shouldBeOpaque;
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    /* ---------- resize ---------- */
+    function resize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', resize);
+    resize();
+  </script>
+
+</body>
+</html>
