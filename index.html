@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>for smolli</title>
+<title>666</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💀</text></svg>'>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,9 +31,14 @@
   html, body {
     height: 100%;
     overflow: hidden;
-    cursor: none;
+    cursor: url('pointer-64.png') 20 6, auto;
   }
-  body:not(.started) { cursor: pointer; }
+  /* swap to the other variant only while the mouse is actually held down */
+  body.pressing, body.pressing * {
+    cursor: url('cursor-64.png') 2 2, pointer;
+  }
+  /* hide entirely after 3s of no movement */
+  body.idle, body.idle * { cursor: none !important; }
 
   /* pre-click: hold the whole sequence. 666 floats + jitters on its own. */
   body:not(.started) :is(
@@ -76,7 +82,7 @@
     width: 100vw;
     height: 100vh;
     opacity: 0;
-    animation: mandala-in 5s ease-out 22s forwards;
+    animation: mandala-in 5s ease-out 18s forwards;
   }
   @keyframes mandala-in { to { opacity: 0.17; } }
 
@@ -265,11 +271,8 @@
     opacity: 0;
     animation: filigree-in 4s ease-out 12s forwards;
   }
-  @keyframes filigree-in { to { opacity: 0.7; } }
+  @keyframes filigree-in { to { opacity: 0.5; } }
   .filigree svg { width: 100%; height: 100%; display: block; }
-  /* top-right filigree sits behind the control icons — fade it further */
-  .filigree.tr { animation: filigree-in-tr 4s ease-out 12s forwards; }
-  @keyframes filigree-in-tr { to { opacity: 0.2; } }
   .filigree.tl { top: 14px;    left: 14px;    }
   .filigree.tr { top: 14px;    right: 14px;   transform: scaleX(-1); }
   .filigree.bl { bottom: 14px; left: 14px;    transform: scaleY(-1); }
@@ -382,8 +385,8 @@
     animation: age-float 7s ease-in-out infinite;
   }
   @keyframes age-float {
-    0%, 100% { transform: translateY(-2px); }
-    50%      { transform: translateY(-10px); }
+    0%, 100% { transform: translateY(4px); }
+    50%      { transform: translateY(-22px); }
   }
   .age-666 .digit {
     position: relative;
@@ -397,24 +400,24 @@
   .age-666 .digit:nth-child(2) { animation: jitter-b 4.1s ease-in-out infinite; }
   .age-666 .digit:nth-child(3) { animation: jitter-c 3.7s ease-in-out infinite; }
   @keyframes jitter-a {
-    0%, 100% { transform: translate(0, 0)       rotate(0deg); }
-    25%      { transform: translate(-0.6px, 1px) rotate(-0.45deg); }
-    50%      { transform: translate(0.9px, -1.1px) rotate(0.35deg); }
-    75%      { transform: translate(-0.4px, 0.6px) rotate(-0.25deg); }
+    0%, 100% { transform: translate(0, 0)         rotate(0deg); }
+    25%      { transform: translate(-1.4px, 2.2px) rotate(-0.9deg); }
+    50%      { transform: translate(2px, -2.4px)   rotate(0.7deg); }
+    75%      { transform: translate(-0.9px, 1.3px) rotate(-0.5deg); }
   }
   @keyframes jitter-b {
-    0%, 100% { transform: translate(0, 0)       rotate(0deg); }
-    30%      { transform: translate(0.7px, -0.9px) rotate(0.35deg); }
-    60%      { transform: translate(-0.8px, 1px)  rotate(-0.3deg); }
+    0%, 100% { transform: translate(0, 0)         rotate(0deg); }
+    30%      { transform: translate(1.6px, -1.9px) rotate(0.7deg); }
+    60%      { transform: translate(-1.8px, 2.2px) rotate(-0.6deg); }
   }
   @keyframes jitter-c {
-    0%, 100% { transform: translate(0, 0)       rotate(0deg); }
-    35%      { transform: translate(-1px, 0.7px) rotate(-0.35deg); }
-    70%      { transform: translate(0.6px, -1.3px) rotate(0.45deg); }
+    0%, 100% { transform: translate(0, 0)         rotate(0deg); }
+    35%      { transform: translate(-2.2px, 1.6px) rotate(-0.7deg); }
+    70%      { transform: translate(1.4px, -2.8px) rotate(0.9deg); }
   }
   /* when the middle fades, glide the outer 3s together instead of snapping */
-  .age-666.collapsing .digit:nth-child(1) { animation: slide-right 1.1s cubic-bezier(.3,0,.2,1) 0.35s forwards; }
-  .age-666.collapsing .digit:nth-child(3) { animation: slide-left  1.1s cubic-bezier(.3,0,.2,1) 0.35s forwards; }
+  .age-666.collapsing .digit:nth-child(1) { animation: slide-right 5s cubic-bezier(.3,0,.2,1) 0.5s forwards; }
+  .age-666.collapsing .digit:nth-child(3) { animation: slide-left  5s cubic-bezier(.3,0,.2,1) 0.5s forwards; }
   @keyframes slide-right { to { transform: translate(0.58em, 0); } }
   @keyframes slide-left  { to { transform: translate(-0.58em, 0); } }
 
@@ -428,7 +431,7 @@
     100% { filter: blur(0);   opacity: 1;   transform: scale(1); }
   }
   .age-666 .digit.hide {
-    animation: digit-hide 1s ease-out forwards;
+    animation: digit-hide 1.8s ease-out forwards;
   }
   @keyframes digit-hide {
     0%   { opacity: 1; filter: blur(0);  transform: scale(1); }
@@ -475,12 +478,14 @@
   /* ---------- top-right controls (mute / volume / fullscreen) ---------- */
   .controls {
     position: fixed;
-    top: 20px;
-    right: 200px;
+    top: 50%;
+    right: 80px;
+    transform: translateY(-50%);
     z-index: 9;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 18px;
+    gap: 12px;
     pointer-events: none;
     opacity: 0;
     animation: controls-in 2s ease-out 16s forwards;
@@ -488,8 +493,12 @@
   @keyframes controls-in { to { opacity: 0.55; } }
   body.ctrl-ready .controls { pointer-events: auto; }
   .controls:hover { filter: brightness(1.5); transition: filter 0.25s ease; }
-  .controls, .controls * { cursor: auto; }
-  .controls .ctrl { cursor: pointer; }
+  .controls, .controls *, .controls .ctrl {
+    cursor: url('pointer-64.png') 20 6, auto;
+  }
+  body.pressing .controls, body.pressing .controls *, body.pressing .controls .ctrl {
+    cursor: url('cursor-64.png') 2 2, pointer;
+  }
 
   .ctrl {
     --dx: 0px;
@@ -498,7 +507,7 @@
     background: transparent;
     border: none;
     color: #d9342f;
-    padding: 4px;
+    padding: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -506,12 +515,13 @@
     transition: color 0.25s ease, transform 0.25s ease;
   }
   .ctrl:hover { color: var(--candle-gold); transform: translate(var(--dx), var(--dy)) scale(calc(var(--sc) * 1.08)); }
-  .ctrl svg { width: 22px; height: 22px; overflow: visible; }
+  /* SVGs don't capture hover — the button receives events over its full padded box */
+  .ctrl svg { width: 22px; height: 22px; overflow: visible; pointer-events: none; }
 
-  /* per-icon baked positions */
-  #c-vol    { --dx: 255px; --dy: 50px;  --sc: 1.38; }
-  #c-replay { --dx: 208px; --dy: 100px; --sc: 1.16; }
-  #c-fs     { --dx: 159px; --dy: 0px;   --sc: 1.22; }
+  /* per-icon baked sizes + stack order (fullscreen on top, replay at bottom) */
+  #c-fs     { --dx: 0px; --dy: 0px; --sc: 1.22; order: 1; }
+  #c-vol    { --dx: 0px; --dy: 0px; --sc: 1.38; order: 2; }
+  #c-replay { --dx: 0px; --dy: 0px; --sc: 1.16; order: 3; }
 
   /* 4-state speaker: default hidden, active one shown via .controls.vol-* class */
   .ctrl .ic-vol-low,
@@ -527,6 +537,117 @@
   body.is-fs .ic-fs-enter { display: none; }
   body.is-fs .ic-fs-exit  { display: inline; }
 
+  /* ---------- loader (z:100) — shown until assets are ready ---------- */
+  .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: #0a0305;
+    display: grid;
+    place-items: center;
+    transition: opacity 1.1s ease-out;
+    pointer-events: all;
+  }
+  body.loaded .loader {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .loader-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #c23b2c;
+    box-shadow: 0 0 22px rgba(194, 59, 44, 0.85),
+                0 0 48px rgba(194, 59, 44, 0.4);
+    animation: loader-pulse 1.3s ease-in-out infinite;
+  }
+  @keyframes loader-pulse {
+    0%, 100% { transform: scale(0.75); opacity: 0.55; }
+    50%      { transform: scale(1.1);  opacity: 1; }
+  }
+
+  /* ---------- click-anywhere hint (appears below the 666 pre-click) ---------- */
+  .hint {
+    position: fixed;
+    top: 74%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 7;
+    color: var(--ink-dim);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.4s ease-out 0.4s;
+    animation: hint-pulse 2.8s ease-in-out 1s infinite;
+  }
+  @keyframes hint-pulse {
+    0%, 100% { filter: brightness(0.8); }
+    50%      { filter: brightness(1.2); }
+  }
+  body.loaded .hint  { opacity: 0.6; }
+  body.started .hint { opacity: 0; transition: opacity 0.5s ease-out; }
+
+  /* ---------- pre-click begin-button (cursor magnet away from the 666) ---------- */
+  .begin-btn {
+    position: fixed;
+    top: 82%;
+    left: 50%;
+    z-index: 7;
+    width: 108px;
+    height: 108px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(194, 65, 12, 0.7);
+    background: radial-gradient(circle, rgba(194, 65, 12, 0.18) 0%, transparent 70%);
+    box-shadow: 0 0 22px rgba(194, 65, 12, 0.3);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 1.4s ease-out 0.6s, transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    animation: begin-pulse 2.6s ease-in-out 1.8s infinite;
+  }
+  .begin-btn, .begin-btn svg, .begin-btn svg * {
+    cursor: url('pointer-64.png') 20 6, auto;
+  }
+  body.pressing .begin-btn, body.pressing .begin-btn svg, body.pressing .begin-btn svg * {
+    cursor: url('cursor-64.png') 2 2, pointer;
+  }
+  .begin-btn svg { width: 75px; height: 75px; pointer-events: none; overflow: visible; }
+  .begin-btn svg path {
+    fill: none;
+    stroke: var(--candle-gold);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  body.loaded .begin-btn svg path {
+    animation: penta-draw 3.2s cubic-bezier(.45,.05,.2,1) 0.9s forwards;
+  }
+  @keyframes penta-draw {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes begin-pulse {
+    0%, 100% { box-shadow: 0 0 22px rgba(194, 65, 12, 0.30); }
+    50%      { box-shadow: 0 0 40px rgba(194, 65, 12, 0.55); }
+  }
+  body.loaded .begin-btn { opacity: 0.85; pointer-events: auto; }
+  body.loaded .begin-btn:hover {
+    transform: translate(-50%, -50%) scale(1.12);
+    background: radial-gradient(circle, rgba(194, 65, 12, 0.38) 0%, transparent 70%);
+    box-shadow: 0 0 40px rgba(194, 65, 12, 0.6);
+  }
+  body.started .begin-btn { opacity: 0; pointer-events: none; transition: opacity 0.4s ease-out; }
+
 </style>
 <script type="importmap">
 {
@@ -538,6 +659,68 @@
 </script>
 </head>
 <body>
+
+  <!-- loader — hides when all assets are ready -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader-dot"></div>
+  </div>
+
+  <!-- click-anywhere hint (visible over the 666 pre-click) -->
+  <div class="hint" aria-hidden="true">click anywhere</div>
+  <button class="begin-btn" type="button" aria-label="Begin">
+    <svg viewBox="0 0 176.5 167.66" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path pathLength="1" d="m87.906 0.5-29.468 92.094l5.9688 4.8125 22.75-71.75 11.688 35.063 8.6875-0.25-19.624-59.969zm7.0938 11.969 2.4688 8.1875c23.711 3.049 43.671 18.053 53.691 38.75l8.84 0.375c-10.9-26.06-35.61-44.877-65-47.312zm-13.812 0.0625c-29.95 2.797-54.945 22.627-65.188 49.718h8.5312c9.416-21.923 29.759-38.037 54.188-41.469l2.4688-8.25zm94.812 49.437l-97.812 1.625-2.1562 7.2188 77.281-0.875-32.406 23.875 2 7.625 53.09-39.471zm-111.5 1.875-64 1.0625 79.281 56.438 6.7188-5.2188-61.563-44.719 37.406-0.4375 2.1562-7.125zm47 8.7812-8.5938 0.25 24.219 72.75-30.187-21.938-7.1562 4.7812l52.153 37.17-30.44-93.005zm52.781 0.8125-7.1562 4.8125c0.6132 3.715 0.9375 7.5172 0.9375 11.406 0 19.918-8.37 37.875-21.781 50.563l2.3438 8.5312c16.728-14.218 27.344-35.423 27.344-59.094 0-5.5632-0.57343-10.988-1.6875-16.219zm-152.06 2.6875c-0.77394 4.3942-1.1875 8.915-1.1875 13.531 0 23.178 10.184 43.983 26.312 58.188l2.531-8.4c-12.942-12.64-20.969-30.27-20.969-49.784 0-3.036 0.18514-6.0355 0.5625-8.9688l-7.25-4.5625zm97.78 25.754l-61.344 45.25 11.562-36.5-6.218-4.25-19.438 60.71 77.598-57.68-2.16-7.53zm8.5625 50.562c-9.0953 4.3653-19.3 6.8125-30.062 6.8125-10.736 0-20.919-2.4366-30-6.7812l-7.4062 5.0625c11.09 6.1301 23.84 9.625 37.406 9.625 13.563 0 26.319-3.4976 37.406-9.625l-7.3438-5.0938z"/>
+    </svg>
+  </button>
+
+  <script>
+    // pressing state — pointer cursor only while mouse held, revert on release
+    ['mousedown', 'pointerdown', 'touchstart'].forEach(ev =>
+      window.addEventListener(ev, () => document.body.classList.add('pressing'))
+    );
+    ['mouseup', 'pointerup', 'pointercancel', 'mouseleave', 'touchend', 'touchcancel', 'blur'].forEach(ev =>
+      window.addEventListener(ev, () => document.body.classList.remove('pressing'))
+    );
+
+    // hide the cursor after 3s of no movement; show again on any motion
+    (function () {
+      let t;
+      function wake() {
+        document.body.classList.remove('idle');
+        clearTimeout(t);
+        t = setTimeout(() => document.body.classList.add('idle'), 3000);
+      }
+      ['mousemove', 'pointermove', 'mousedown', 'keydown', 'touchstart', 'touchmove'].forEach(ev =>
+        window.addEventListener(ev, wake, { passive: true })
+      );
+      wake();
+    })();
+
+    // asset load tracker — fires body.loaded when fonts + skull + audio are all ready
+    (function () {
+      const done = { fonts: false, skull: false, audio: false };
+      function check() {
+        if (done.fonts && done.skull && done.audio) {
+          document.body.classList.add('loaded');
+        }
+      }
+      window.__markLoaded = (key) => { done[key] = true; check(); };
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => window.__markLoaded('fonts'));
+      } else {
+        window.__markLoaded('fonts');
+      }
+
+      // safety: reveal anyway after 12s so a stalled asset doesn't trap the page
+      setTimeout(() => {
+        if (!document.body.classList.contains('loaded')) {
+          Object.keys(done).forEach(k => done[k] = true);
+          check();
+        }
+      }, 12000);
+    })();
+  </script>
 
   <!-- top-right controls -->
   <div class="controls vol-high" id="controls">
@@ -827,11 +1010,11 @@
     (function () {
       const TICKER_START  = 0;      // starts immediately on click
       const TICK_RATE     = 50;     // ms per digit change
-      const SETTLE_0      = 1100;   // digit 0 locks to 3
-      const SETTLE_1      = 1900;   // digit 1 locks to 3
-      const SETTLE_2      = 2500;   // digit 2 locks to 3 (shows 333)
-      const FADE_MIDDLE   = 3700;   // hold 333, then fade middle so it reads 33
-      const END           = 5200;   // safety stop
+      const SETTLE_0      = 2000;   // digit 0 locks to 3
+      const SETTLE_1      = 3400;   // digit 1 locks to 3
+      const SETTLE_2      = 4500;   // digit 2 locks to 3 (shows 333)
+      const FADE_MIDDLE   = 5500;   // ~1s pause on 333, then fade middle + slow glide
+      const END           = 11500;  // safety stop
 
       function setDigit(el, v) {
         el.querySelectorAll('.ly').forEach(l => l.textContent = v);
@@ -879,6 +1062,8 @@
       const audio = new Audio('vivaldi%20-%20presto.mp3');
       audio.volume = 0;
       audio.preload = 'auto';
+      audio.addEventListener('canplaythrough', () => window.__markLoaded('audio'), { once: true });
+      audio.addEventListener('error',          () => window.__markLoaded('audio'), { once: true });
       let userTookVolume = false;
       function begin() {
         if (document.body.classList.contains('started')) return;
@@ -1000,6 +1185,61 @@
     redLight.position.set(1.5, -0.65, 0.75);
     scene.add(redLight);
 
+    // NEW: hover-only ambient red — lerps up when mouse is near skull
+    const hoverLight = new THREE.AmbientLight(0xff2230, 0);
+    scene.add(hoverLight);
+
+    // NEW: red/orange glow sprite that sits behind the skull during hover
+    function makeGlowTexture() {
+      const c = document.createElement('canvas');
+      c.width = 256; c.height = 256;
+      const ctx = c.getContext('2d');
+      const g = ctx.createRadialGradient(128, 128, 6, 128, 128, 128);
+      g.addColorStop(0.00, 'rgba(255, 150, 70, 0.9)');
+      g.addColorStop(0.30, 'rgba(220, 60, 25, 0.55)');
+      g.addColorStop(0.65, 'rgba(110, 18, 22, 0.18)');
+      g.addColorStop(1.00, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 256, 256);
+      return new THREE.CanvasTexture(c);
+    }
+    const glowSprite = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: makeGlowTexture(),
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      opacity: 0,
+    }));
+    glowSprite.scale.set(2.4, 2.4, 1);
+    glowSprite.position.set(0.04, -0.15, -0.6); // slightly behind the skull (matches OFFSET_X/Y)
+    scene.add(glowSprite);
+
+    // track mouse in NDC for the "look at cursor" behaviour
+    const mouseNDC = new THREE.Vector2(10, 10); // start off-screen
+    function updateMouse(e) {
+      mouseNDC.x =  (e.clientX / window.innerWidth)  * 2 - 1;
+      mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    }
+    window.addEventListener('pointermove', updateMouse);
+    window.addEventListener('mousemove',   updateMouse);
+    let hoverLerp = 0;
+    // don't start reacting to hover until the user has moved the cursor OUT of the
+    // skull's hover halo at least once after the skull appears — otherwise the
+    // cursor parked near the (clicked) 666 traps the skull in a hovered state
+    let hoverArmed = false;
+    const hoverCfg = {
+      radius:    0.5,     // NDC distance that triggers hover
+      lookY:     0.75,
+      lookX:     0.50,
+      rollZ:     0.20,
+      offY:      0,
+      offX:      0.315,   // pitch calibration — skull looks slightly down so gaze meets cursor
+      offZ:      0,
+      scaleBump: 0.10,
+      lightMax:  0,
+      lerpSpeed: 0.09,
+    };
+
     let skullOpaqued = false;
     const skullCanvasEl = document.getElementById('skull-canvas');
 
@@ -1060,6 +1300,7 @@
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
         skullGroup.position.set(-center.x + OFFSET_X, -center.y + OFFSET_Y, -center.z);
+        skullGroup.rotation.order = 'YXZ';  // yaw-then-pitch for natural look-at behaviour
 
         const maxDim = Math.max(size.x, size.y, size.z);
         baseScale = 1.43 / maxDim;
@@ -1096,9 +1337,10 @@
         });
 
         scene.add(skullGroup);
+        window.__markLoaded('skull');
       },
       undefined,
-      (err) => console.warn('skull load failed', err)
+      (err) => { console.warn('skull load failed', err); window.__markLoaded('skull'); }
     );
 
     /* ---------- choreography ---------- */
@@ -1155,14 +1397,45 @@
       flameLight.position.z = flameSprite.position.z;
 
       if (skullGroup) {
-        // gentle left-right look + very slow X drift, so motion never feels metronomic
-        skullGroup.rotation.y = Math.sin(t * 0.169) * 0.45;
-        // layered slow sines — bounded so the skull can never topple past profile
-        skullGroup.rotation.x = Math.sin(t * 0.20)  * 0.045
-                              + Math.sin(t * 0.037) * 0.20
-                              + Math.sin(t * 0.071) * 0.08;
+        // baseline idle motion
+        const baseRotY = Math.sin(t * 0.194) * 0.45;
+        const baseRotX = Math.sin(t * 0.230) * 0.045
+                       + Math.sin(t * 0.043) * 0.20
+                       + Math.sin(t * 0.082) * 0.08;
+
+        // hover detection: mouse NDC distance from projected skull centre
+        let hovering = false;
+        const skullPos = new THREE.Vector3();
+        skullGroup.getWorldPosition(skullPos);
+        if (skullGroup.visible) {
+          const p = skullPos.clone().project(camera);
+          const dx = mouseNDC.x - p.x;
+          const dy = mouseNDC.y - p.y;
+          const inside = (dx * dx + dy * dy) < hoverCfg.radius * hoverCfg.radius;
+          // arm only after the cursor has been outside the halo at least once
+          if (!hoverArmed && !inside) hoverArmed = true;
+          if (hoverArmed && inside) hovering = true;
+        }
+        hoverLerp += ((hovering ? 1 : 0) - hoverLerp) * hoverCfg.lerpSpeed;
+
+        // direct angle mapping — cursor position maps to target rotation on each axis
+        const lookRotY =  mouseNDC.x * hoverCfg.lookY;   // rotation.y target (yaw)
+        const lookRotX = -mouseNDC.y * hoverCfg.lookX;   // rotation.x target (pitch)
+        const lookRotZ = -mouseNDC.x * hoverCfg.rollZ;   // rotation.z target (roll)
+
+        skullGroup.rotation.y = baseRotY * (1 - hoverLerp) + (lookRotY + hoverCfg.offY) * hoverLerp;
+        skullGroup.rotation.x = baseRotX * (1 - hoverLerp) + (lookRotX + hoverCfg.offX) * hoverLerp;
+        skullGroup.rotation.z = (lookRotZ + hoverCfg.offZ) * hoverLerp;  // baseline roll is 0
+
         const breathe = 1 + Math.sin(t * 0.35) * 0.012;
-        skullGroup.scale.setScalar(baseScale * breathe);
+        const hoverScale = 1 + hoverLerp * hoverCfg.scaleBump;
+        skullGroup.scale.setScalar(baseScale * breathe * hoverScale);
+
+        // red ambient only while hovering
+        hoverLight.intensity = hoverLerp * hoverCfg.lightMax;
+
+        // red/orange glow behind the skull, scaled by hover + skull visibility
+        // (opacity is set below when we compute the skull's fade-in)
 
         // fade in by opacity + blur — no size change
         let opacity, blurPx;
@@ -1176,6 +1449,9 @@
           opacity = eased;
           blurPx = (1 - eased) * 14;
         }
+        // glow sprite follows the same fade + hover strength
+        glowSprite.material.opacity = opacity * hoverLerp * 0.85;
+        glowSprite.visible = opacity > 0;
         for (const m of skullMaterials) m.opacity = opacity;
         skullCanvasEl.style.filter = blurPx > 0.01 ? `blur(${blurPx.toFixed(2)}px)` : '';
 
